@@ -1,5 +1,5 @@
 {
-  "name": "@sequena/react-native-image-crop-picker",
+  "name": "@sequenia/react-native-image-crop-picker",
   "version": "0.39.1",
   "description": "Select single or multiple images, with cropping option",
   "main": "index.js",
