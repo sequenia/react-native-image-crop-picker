@@ -137,6 +137,13 @@ declare module "react-native-image-crop-picker" {
          * @default true
          */
         writeTempFile?: boolean;
+
+        /**
+         * The maximum duration a video can have. If `undefined` or `-1`, no limit is set.
+         *
+         * @default undefined
+         */
+        maximumVideoDuration?: number;
     }
 
     type ImageOptions = CommonOptions & {
@@ -343,6 +350,7 @@ declare module "react-native-image-crop-picker" {
          * @default 'MediumQuality'
          */
         compressVideoPreset?: CompressVideoPresets;
+
     };
 
     type AnyOptions = Omit<ImageOptions, 'mediaType'> & Omit<VideoOptions, 'mediaType'> & {

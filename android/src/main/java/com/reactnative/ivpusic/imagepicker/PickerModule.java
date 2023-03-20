@@ -99,6 +99,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
 
     private int width = 0;
     private int height = 0;
+    private int maximumVideoDuration = -1;
 
     private Uri mCameraCaptureURI;
     private String mCurrentMediaPath;
@@ -139,6 +140,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         cropperToolbarWidgetColor = options.hasKey("cropperToolbarWidgetColor") ? options.getString("cropperToolbarWidgetColor") : null;
         cropperCircleOverlay = options.hasKey("cropperCircleOverlay") && options.getBoolean("cropperCircleOverlay");
         freeStyleCropEnabled = options.hasKey("freeStyleCropEnabled") && options.getBoolean("freeStyleCropEnabled");
+        maximumVideoDuration = options.hasKey("maximumVideoDuration") ? options.getInt("maximumVideoDuration") : -1;
         showCropGuidelines = !options.hasKey("showCropGuidelines") || options.getBoolean("showCropGuidelines");
         showCropFrame = !options.hasKey("showCropFrame") || options.getBoolean("showCropFrame");
         hideBottomControls = options.hasKey("hideBottomControls") && options.getBoolean("hideBottomControls");
@@ -343,7 +345,9 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
             }
 
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraCaptureURI);
-
+            if (Build.VERSION.SDK_INT >= 29 && maximumVideoDuration > 0) {
+                cameraIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maximumVideoDuration);
+            }
             if (this.useFrontCamera) {
                 cameraIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);
                 cameraIntent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
@@ -378,6 +382,10 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
                 galleryIntent.setType("*/*");
                 String[] mimetypes = {"image/*", "video/*"};
                 galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+            }
+
+            if (Build.VERSION.SDK_INT >= 29 && maximumVideoDuration > 0) {
+                galleryIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maximumVideoDuration);
             }
 
             galleryIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
