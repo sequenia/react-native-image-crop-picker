@@ -48,5 +48,6 @@ typedef NS_ENUM(NSUInteger, QBImagePickerMediaType) {
 
 @property (nonatomic, assign) NSUInteger numberOfColumnsInPortrait;
 @property (nonatomic, assign) NSUInteger numberOfColumnsInLandscape;
+@property (nonatomic, assign) CGFloat maximumVideoDuration;
 
 @end

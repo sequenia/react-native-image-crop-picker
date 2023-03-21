@@ -234,19 +234,30 @@ static CGSize CGSizeScale(CGSize size, CGFloat scale) {
     if (self.assetCollection) {
         PHFetchOptions *options = [PHFetchOptions new];
 
+        NSMutableArray *predicates = [@[] mutableCopy];
+
         switch (self.imagePickerController.mediaType) {
             case QBImagePickerMediaTypeImage:
-                options.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeImage];
+                [predicates addObject:[NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeImage]];
                 break;
 
             case QBImagePickerMediaTypeVideo:
-                options.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeVideo];
+                [predicates addObject:[NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeVideo]];
+                if (self.imagePickerController.maximumVideoDuration > -1) {
+                    CGFloat duration = self.imagePickerController.maximumVideoDuration;
+                    [predicates addObject:[NSPredicate predicateWithFormat:@"duration <= %f", duration]];
+                }
                 break;
 
             default:
+                if (self.imagePickerController.maximumVideoDuration > -1) {
+                    CGFloat duration = self.imagePickerController.maximumVideoDuration;
+                    [predicates addObject:[NSPredicate predicateWithFormat:@"mediaType == %ld OR (mediaType == %ld AND duration <= %f)", PHAssetMediaTypeImage, PHAssetMediaTypeVideo, duration]];
+                }
                 break;
         }
 
+        options.predicate = [[NSCompoundPredicate alloc] initWithType:NSAndPredicateType subpredicates:predicates];
 
         if ([self.imagePickerController.sortOrder isEqualToString:@"asc"]) {
             options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending: YES]];
